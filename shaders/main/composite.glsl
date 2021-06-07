@@ -4,8 +4,6 @@
 #include "/lib/globalVar.glsl"
 
 #include "/lib/globalSamplers.glsl"
-#include "/lib/lighting/shdDistort.glsl"
-#include "/lib/conversion.glsl"
 
 INOUT vec2 texcoord;
 

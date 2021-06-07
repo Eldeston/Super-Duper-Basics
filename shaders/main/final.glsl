@@ -18,7 +18,6 @@ INOUT vec2 texcoord;
     void main(){
         vec3 color = texture2D(gcolor, texcoord).rgb;
 
-    /* DRAWBUFFERS:0 */
-        gl_FragData[0] = vec4(color, 1); //gcolor
+        gl_FragColor = vec4(color, 1); //final color
     }
 #endif
