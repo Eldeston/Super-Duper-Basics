@@ -6,6 +6,10 @@ vec3 toScreen(vec3 pos){
 	return (data.xyz / -pos.z) * 0.5 + 0.5;
 }
 
+float toScreen(float depth) {
+	return ((gbufferProjection[2].z * depth + gbufferProjection[3].z) / -depth) * 0.5 + 0.5;
+}
+
 vec3 toView(vec3 pos){
 	vec3 result = pos * 2.0 - 1.0;
 	vec3 viewPos = vec3(vec2(gbufferProjectionInverse[0].x, gbufferProjectionInverse[1].y) * result.xy + gbufferProjectionInverse[3].xy, gbufferProjectionInverse[3].z);

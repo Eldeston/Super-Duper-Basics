@@ -9,6 +9,7 @@ const int RGB16 = 1;
 const int RGB16F = 1;
 const int RGBA16F = 1;
 
+/* Buffer texture settings */
 const int gcolorFormat = RGBA16F;
 
 // Default resolution
