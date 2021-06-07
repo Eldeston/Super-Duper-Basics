@@ -1,0 +1,2 @@
+# Super Duper Basics
+    This is a plain shader pack for Java Optifine with functions and effects included and an organized shader pipeline based from Super Duper Vanilla. Created as a base for Super Duper Vanilla in case I overhaul/rewrite the entire shader pack.

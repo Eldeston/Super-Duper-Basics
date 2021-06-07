@@ -1,0 +1,66 @@
+screen.CAMERA=Camera
+    option.VIGNETTE=Vignette
+    option.UNDERWATER_BLUR=Underwater blur
+    option.VIGNETTE_INTENSITY=Vignette intensity
+    option.AUTO_EXPOSURE=Auto exposure
+    option.BLOOM=Bloom
+    option.BLOOM_LOD=Bloom LOD
+    option.BLOOM_PIX_SIZE=Bloom pixel size
+    option.BLOOM_BRIGHTNESS=Bloom brightness
+    option.BLOOM_QUALITY=Bloom quality
+    option.OUTLINES=Outlines
+    option.OUTLINE_BRIGHTNESS=Outline brightness
+    option.OUTLINE_PIX_SIZE=Outline pixel size
+    screen.CAMERA.comment=Camera settings for tonemap, vignette, HDR, postprocessing etc.
+
+screen.TONEMAP=Tonemap
+    option.SATURATION=Saturation
+    option.CONTRAST=Contrast
+    option.EXPOSURE=Exposure
+    option.GAMMA=Gamma
+    screen.TONEMAP.comment=Edit camera's tone settings for saturation, contrast etc.
+
+screen.LIGHTING=Lighting
+    option.RENDER_FOLIAGE_SHD=Cutout shadows
+    option.SHD_COL=Shadow color
+    option.shadowMapResolution=Shadowmap resolution
+    option.sunPathRotation=Light rotation
+    option.SHADOW_FILTER=Soft shadow filter
+    option.SHADOW_DISTORT_FACTOR=Shadow distortion factor
+    option.UNDERWATER_CAUSTICS=Underwater caustics
+    option.SHADOW_DISTORT=Shadow distortion
+    option.AMBIENT_LIGHTING=Ambient lighting
+    screen.LIGHTING.comment=Lighting settings for shadow resolution, lightmap etc.
+
+screen.PBR=PBR settings
+    option.DEFAULT_MAT=Default PBR materials
+
+screen.RAY_TRACING=Ray tracing settings
+    option.SSGI_STEPS=SSGI steps
+    option.SSR_STEPS=SSR steps
+    option.SSGI_BISTEPS=SSGI refinement steps
+    option.SSR_BISTEPS=SSR refinement steps
+    option.TEMPORAL_ACCUMULATION=Temporal accumulation
+    option.ACCUMILATION_SPEED=Accumulation speed
+
+screen.WATER_SETTINGS=Water settings
+    option.WATER_BLUR_SIZE=Water blur size
+    option.WATER_DEPTH_SIZE=Water depth size
+    option.WATER_TILE_SIZE=Water tile size
+    option.WATER_NORM=Water normals
+
+screen.ATMOSPHERICS=Atmospherics
+    option.VOL_LIGHT_BRIGHTNESS=Volumetric light amount
+    option.VOL_LIGHT=Volumetric lighting
+    option.MIST_GROUND_FOG_BRIGHTNESS=Ground fog amount
+
+screen.ANIMATION=Animation
+    option.ANIMATE=Animate
+    option.ANIMATION_SPEED=Animation speed
+
+screen.DEBUG=Super Duper Vanilla by Eldeston
+    option.WHITE_MODE=White mode
+    option.WHITE_MODE_F=White mode foliage
+    option.NOISE_SPEED=Noise speed
+    option.BUFFER_VIEW=Buffer view
+    screen.DEBUG.comment=Developed by §2Eldeston§f§r, produced by §9FlameRender §9Studios. §eClick me to open shader debug settings!

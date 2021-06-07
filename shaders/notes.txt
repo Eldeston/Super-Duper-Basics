@@ -1,0 +1,16 @@
+Goal:
+
+-Optimize and effeciently use the available resources while keeping good fps.
+-Keep the codes squeaky clean, understandable, and portable.
+-Retain the material system.
+
+Framebuffers:
+
+gcolor - Main texture
+colortex1 - Normals
+colortex2 - Lightmap.xy, subsurface scattering
+colortex3 - Metal, emissive, roughness
+colortex4 - AO, cloud mask, Alpha
+colortex5 - Reflections
+colortex6 - Accumulation buffer, exposure
+colortex7 - Bloom
