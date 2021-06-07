@@ -2,6 +2,8 @@
 #include "/lib/structs.glsl"
 #include "/lib/settings.glsl"
 
+#include "/lib/globalVars/constants.glsl"
+
 INOUT vec2 texcoord;
 
 INOUT vec4 glcolor;
