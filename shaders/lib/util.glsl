@@ -142,11 +142,23 @@ vec2 modFract(vec2 x, float tile){
 	return fract(x / tile) * tile;
 }
 
+vec2 modFract(vec2 x, vec2 tile){
+	return fract(x / tile) * tile;
+}
+
 vec3 modFract(vec3 x, float tile){
 	return fract(x / tile) * tile;
 }
 
+vec3 modFract(vec3 x, vec3 tile){
+	return fract(x / tile) * tile;
+}
+
 vec4 modFract(vec4 x, float tile){
+	return fract(x / tile) * tile;
+}
+
+vec4 modFract(vec4 x, vec4 tile){
 	return fract(x / tile) * tile;
 }
 

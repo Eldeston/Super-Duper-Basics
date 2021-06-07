@@ -1,29 +1,3 @@
-const int RGBA1 = 1;
-
-const int RGB8 = 1;
-const int RGB16 = 1;
-
-const int RGB16F = 1;
-const int RGBA16F = 1;
-
-const int gcolorFormat = RGBA16F;
-
-// Depth texture
-uniform sampler2D depthtex0;
-// Albedo texture color 0
-uniform sampler2D gcolor;
-
-// Default resolution
-const int noiseTextureResolution = 256;
-
-#ifdef GBUFFERS
-    // Default AO
-    const float ambientOcclusionLevel = 1.0;
-#endif
-
-// Noise sample, r for blue noise, g for white noise, and b for cell noise
-uniform sampler2D noisetex;
-
 // Filter by iq
 vec4 tex2DFilter(sampler2D image, vec2 st, vec2 texRes){
     vec2 uv = st * texRes + 0.5;

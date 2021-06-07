@@ -1,18 +1,3 @@
-#define PI 3.14159265359
-#define PI2 6.28318530718
-
-// Enable mipmap filtering on shadows
-const bool shadowHardwareFiltering = true;
-
-const int shadowMapResolution = 1024; // Shadow map resolution [512 1024 1536 2048 2560 3072 3584 4096 4608 5120]
-// Shadow noise tile
-const int shdNoiseTile = 128;
-
-// Lm noise tile
-const int lmNoiseTile = 16;
-
-const float sunPathRotation = 45.0; // Light/sun/moon angle by degrees [-63.0 -54.0 -45.0 -36.0 -27.0 -18.0 -9.0 0.0 9.0 18.0 27.0 36.0 45.0 54.0 63.0]
-
 float eyeBrightFact = eyeBrightnessSmooth.y / 240.0;
 
 float newDawnDusk = smoothstep(0.32, 0.96, dawnDusk);
