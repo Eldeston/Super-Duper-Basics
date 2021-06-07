@@ -6,58 +6,12 @@ const int RGB16 = 1;
 const int RGB16F = 1;
 const int RGBA16F = 1;
 
-#if !defined GBUFFERS || !defined FINAL
-    const int gcolorFormat = RGBA16F;
-#else
-    const int gcolorFormat = RGB16;
-#endif
-
-const int gdepthFormat = RGB16F;
-const int colortex1Format = RGB16;
-const int colortex2Format = RGB8;
-const int colortex3Format = RGB8;
-const int colortex4Format = RGB8;
-const int colortex5Format = RGB16;
-
-#if !defined GBUFFERS || !defined FINAL
-    const int colortex6Format = RGBA16F;
-#else
-    const int colortex6Format = RGB16;
-#endif
-
-const int colortex7Format = RGB16;
-
-#if !defined GBUFFERS || !defined FINAL
-    const bool gcolorMipmapEnabled = true;
-    const bool colortex6MipmapEnabled = true;
-    const bool colortex7MipmapEnabled = true;
-
-    const bool colortex5Clear = false;
-    const bool colortex6Clear = false;
-#endif
+const int gcolorFormat = RGBA16F;
 
 // Depth texture
 uniform sampler2D depthtex0;
-
-#if !defined GBUFFERS
-    // Albedo texture color 0
-    uniform sampler2D gcolor;
-    // Normal map buffer(rgb)
-    uniform sampler2D colortex1;
-    // Lightmap coord(rg) and subsurface scattering
-    uniform sampler2D colortex2;
-    // Metallic, emissive, roughness
-    uniform sampler2D colortex3;
-    // AO, cloud mask, alpha
-    uniform sampler2D colortex4;
-
-    // Reflections
-    uniform sampler2D colortex5;
-    // Accumulation buffer, and exposure
-    uniform sampler2D colortex6;
-    // Bloom
-    uniform sampler2D colortex7;
-#endif
+// Albedo texture color 0
+uniform sampler2D gcolor;
 
 // Default resolution
 const int noiseTextureResolution = 256;
@@ -117,16 +71,4 @@ vec4 H2NWater(vec2 st){
     #endif
     
     return vec4(normalize(vec3(dx, dy, WATER_DEPTH_SIZE)), d);
-}
-
-float getParallaxClouds3D(sampler2D source, vec2 startUv, float thickness, float dither, int steps){
-    float stepSize = 1.0 / float(steps);
-    vec2 endUv = startUv * stepSize * thickness * (1.0 + dither * 0.2);
-
-    float clouds = 0.0;
-    for(int i = 0; i < steps; i++){
-        startUv += endUv;
-        clouds += texture2D(source, startUv + vec2(frameTimeCounter * 0.001, 0)).r;
-    }
-    return sqrt(clouds * stepSize);
 }

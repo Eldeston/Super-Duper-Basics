@@ -1,56 +1,6 @@
 #define PI 3.14159265359
 #define PI2 6.28318530718
 
-uniform int isEyeInWater;
-
-uniform float viewWidth;
-uniform float viewHeight;
-
-// Get frame time
-uniform float frameTime;
-uniform float frameTimeCounter;
-
-// Get world time
-uniform float adjustedTime;
-uniform float day;
-uniform float night;
-uniform float dawnDusk;
-uniform float twilight;
-uniform float nightVision;
-uniform float blindness;
-uniform float rainStrength;
-
-uniform float far;
-
-uniform ivec2 eyeBrightnessSmooth;
-
-// Position uniforms
-uniform vec3 cameraPosition;
-uniform vec3 previousCameraPosition;
-uniform vec3 shadowLightPosition;
-
-// Vec3 color uniforms
-uniform vec3 fogColor;
-uniform vec4 entityColor;
-
-// View matrix uniforms
-uniform mat4 gbufferModelView;
-uniform mat4 gbufferModelViewInverse;
-uniform mat4 gbufferPreviousModelView;
-
-// Projection matrix uniforms
-uniform mat4 gbufferProjection;
-uniform mat4 gbufferProjectionInverse;
-uniform mat4 gbufferPreviousProjection;
-
-// Shadow view matrix uniforms
-uniform mat4 shadowModelView;
-uniform mat4 shadowModelViewInverse;
-
-// Shadow projection matrix uniforms
-uniform mat4 shadowProjection;
-uniform mat4 shadowProjectionInverse;
-
 // Enable mipmap filtering on shadows
 const bool shadowHardwareFiltering = true;
 

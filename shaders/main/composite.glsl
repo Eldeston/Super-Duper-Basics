@@ -1,9 +1,6 @@
 #include "/lib/util.glsl"
 #include "/lib/structs.glsl"
 #include "/lib/settings.glsl"
-#include "/lib/globalVar.glsl"
-
-#include "/lib/globalSamplers.glsl"
 
 INOUT vec2 texcoord;
 
@@ -15,6 +12,8 @@ INOUT vec2 texcoord;
 #endif
 
 #ifdef FRAGMENT
+    uniform sampler2D gcolor;
+    
     void main(){
         vec3 color = texture2D(gcolor, texcoord).rgb;
 

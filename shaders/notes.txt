@@ -3,6 +3,7 @@ Goal:
 -Optimize and effeciently use the available resources while keeping good fps.
 -Keep the codes squeaky clean, understandable, and portable.
 -Retain the material system.
+-Retain the shader pipeline strucure
 
 Framebuffers:
 
