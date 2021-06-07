@@ -5,10 +5,16 @@
 
 #include "/lib/globalSamplers.glsl"
 
+#include "/lib/vertexWave.glsl"
+#include "/lib/PBR.glsl"
+
+INOUT float blockId;
+
 INOUT vec2 lmcoord;
 INOUT vec2 texcoord;
 
 INOUT vec3 norm;
+INOUT vec3 worldPos;
 
 INOUT vec4 glcolor;
 
@@ -19,12 +25,15 @@ INOUT vec4 glcolor;
     attribute vec4 at_tangent;
 
     void main(){
-	    gl_Position = ftransform();
+        vec4 vertexPos = gl_ModelViewMatrix * gl_Vertex;
 
         texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
         lmcoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+        blockId = mc_Entity.x;
 
 	    norm = normalize(gl_NormalMatrix * gl_Normal);
+        
+	    gl_Position = gl_ProjectionMatrix * vertexPos;
 
         glcolor = gl_Color;
     }
@@ -35,13 +44,9 @@ INOUT vec4 glcolor;
 
     void main(){
         vec4 color = texture2D(texture, texcoord);
-        color.rgb *= glcolor.rgb;
+        color.rgb *= glcolor;
 
-    /* DRAWBUFFERS:01234 */
+    /* DRAWBUFFERS:0 */
         gl_FragData[0] = color; //gcolor
-        gl_FragData[1] = vec4(norm * 0.5 + 0.5, 1); //colortex1
-        gl_FragData[2] = vec4(lmcoord, 1, 1); //colortex2
-        gl_FragData[3] = vec4(0, 0, 1, 1); //colortex3
-        gl_FragData[4] = vec4(glcolor.a, 0, 0, 1); //colortex4
     }
 #endif

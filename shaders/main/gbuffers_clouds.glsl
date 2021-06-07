@@ -30,11 +30,7 @@ INOUT vec4 glcolor;
         vec4 color = texture2D(texture, texcoord);
         color.rgb *= glcolor.rgb;
 
-    /* DRAWBUFFERS:01234 */
+    /* DRAWBUFFERS:0 */
         gl_FragData[0] = color; //gcolor
-        gl_FragData[1] = vec4(norm * 0.5 + 0.5, 1); //colortex1
-        gl_FragData[2] = vec4(0, 1, 0.8, 1); //colortex2
-        gl_FragData[3] = vec4(0, 0, 1, 1); //colortex3
-        gl_FragData[4] = vec4(glcolor.a, 1, 0, 1); //colortex4
     }
 #endif
