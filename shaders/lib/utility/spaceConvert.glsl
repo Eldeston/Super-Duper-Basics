@@ -12,6 +12,10 @@ vec3 toView(vec3 pos){
     return viewPos / (gbufferProjectionInverse[2].w * result.z + gbufferProjectionInverse[3].w);
 }
 
+float toView(float depth){
+	return gbufferProjectionInverse[3].z / (gbufferProjectionInverse[2].w * (depth * 2.0 - 1.0) + gbufferProjectionInverse[3].w);
+}
+
 vec4 toShadow(vec3 pos){
 	vec3 shdPos = mat3(shadowProjection) * (mat3(shadowModelView) * pos + shadowModelView[3].xyz) + shadowProjection[3].xyz;
 	float distortFactor = getDistortFactor(shdPos.xy);
@@ -33,8 +37,4 @@ vec2 toPrevScreenPos(vec2 currentPos){
 	prevPosition = gbufferPreviousModelView * prevPosition;
 	prevPosition = gbufferPreviousProjection * prevPosition;
 	return prevPosition.xy / prevPosition.w * 0.5 + 0.5;
-}
-
-float toView(float depth){
-	return gbufferProjectionInverse[3].z / (gbufferProjectionInverse[2].w * (depth * 2.0 - 1.0) + gbufferProjectionInverse[3].w);
 }
