@@ -13,27 +13,20 @@ const int RGB16F = 1;
 const int RGBA16 = 1;
 const int RGBA16F = 1;
 
-#ifndef GBUFFERS
-    /* Texture buffer  settings */
+/* Texture buffer  settings */
+#if defined COMPOSITE || defined DEFERRED || defined COMPOSITE1
     const int gdepthFormat = RGBA16F;
+    const int gcolorFormat = RGBA16F;
     const int colortex1Format = RGB16;
     const int colortex2Format = RGB8;
     const int colortex3Format = RGB8;
     const int colortex4Format = RGB8;
     const int colortex5Format = RGB16;
-
-    #if defined COMPOSITE || defined DEFERRED
-        const int gcolorFormat = RGBA16F;
-        const int colortex6Format = RGBA16F;
-    #else
-        const int gcolorFormat = RGB16;
-        const int colortex6Format = RGBA16;
-    #endif
-
+    const int colortex6Format = RGBA16F;
     const int colortex7Format = RGB16;
 #endif
 
-#if !defined GBUFFERS || !defined FINAL
+#if defined COMPOSITE || defined DEFERRED || defined COMPOSITE1 || defined COMPOSITE2 || defined COMPOSITE3
     const bool gcolorMipmapEnabled = true;
     const bool colortex6MipmapEnabled = true;
     const bool colortex7MipmapEnabled = true;
