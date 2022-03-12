@@ -6,36 +6,49 @@ Goal:
 
 Framebuffers:
 
-gcolor - Main scene : RGB16F
+gcolor - Main scene / Skybox, vanilla sun and moon : R11F_G11F_B10F
 colortex1 - Normals : RGB16
-colortex2 - Raw albedo / Bloom : RGB8
-colortex3 - Metallic, emissive, roughness : RGB8
-colortex4 - AO, cloud mask, solid mask : RGB8
-colortex5 - Reflections : RGB16
-colortex6 - Temporal / TAA, Auto Exposure : RGB16F
+colortex2 - Raw albedo : RGB8
+colortex3 - Metallic, roughness, glowing entity : RGB8
+colortex4 - Clouds / Volumetric light / Bloom : R11F_G11F_B10F
+colortex5 - Reflections : R11F_G11F_B10F
+colortex6 - TAA, auto exposure : RGBA16F
+colortex7 - Empty : RGBA8
 
 Custom defined macros:
-
-SHADOW
-GBUFFERS
-NETHER
-END
-DEFERRED
-DEFERRED(1-15)
-COMPOSITE
-COMPOSITE(1-15)
-FINAL
+    World macros:
+        OVERWORLD
+        NETHER
+        END
+    SHADOW
+    GBUFFERS
     Gbuffer macros:
+        PBR enabled programs (PBR materials needs to be defined):
+            TERRAIN
+            WATER
+            BLOCK
+            ENTITIES_GLOWING
+            ENTITIES
+            HAND
+            HAND_WATER
 
-    BASIC
-    BEACON_BEAM
-    CLOUDS
-    ENTITIES
-    HAND_WATER
-    HAND
-    SKY_BASIC
-    SPIDER_EYES
-    TERRAIN
-    TEXTURED
-    HAND_WATER
-    WEATER
+        Default PBR enabled programs (PBR materials needs to be defined):
+            BASIC
+            CLOUDS
+            TEXTURED
+            WEATHER
+
+        Basic programs (No PBR materials defined):
+            ARMOR_GLINT
+            BEACON_BEAM
+            SPIDER_EYES
+            DAMAGED_BLOCK
+
+            LINE
+            SKY_BASIC
+            SKY_TEXTURED
+    DEFERRED
+    DEFERRED(1-15)
+    COMPOSITE
+    COMPOSITE(1-15)
+    FINAL

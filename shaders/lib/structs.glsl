@@ -1,40 +1,35 @@
 // Material PBR struct
 struct matPBR{
     // Albedo texture
-    vec4 albedo_t;
+    vec4 albedo;
     // Normal map
-    vec3 normal_m;
+    vec3 normal;
     // Light map
-    vec2 light_m;
+    vec2 light;
     // Metalic map
-    float metallic_m;
+    float metallic;
     // Emissive map
-	float emissive_m;
-    // Roughness map
-    float roughness_m;
+	float emissive;
+    // Smoothness map
+    float smoothness;
     // Ambient map
-    float ambient_m;
+    float ambient;
+    // Porosity
+    float porosity;
     // Subsurface scattering
-    float ss_m;
+    float ss;
+    // POM self shadows
+    float parallaxShd;
 };
 
 // Position struct
 struct positionVectors{
     // Screen pos
     vec3 screenPos;
-    // Clip pos
-    vec3 clipPos;
     // View position
     vec3 viewPos;
     // Player pos from the eye
     vec3 eyePlayerPos;
     // Player pos from the foot
     vec3 feetPlayerPos;
-    // World/scene position
-    vec3 worldPos;
-    // Light position
-    vec3 lightPos;
-
-    // Shadow position
-    vec4 shdPos;
 };

@@ -1,37 +1,37 @@
-vec3 binarySearch(vec3 clipPosRayDir, vec3 startPos, int binarySearchSteps){
-	for(int y = 0; y < binarySearchSteps; y++){
-		vec3 screenPos = startPos * 0.5 + 0.5;
-		if(screenPos.x < 0 || screenPos.y < 0 || screenPos.x > 1 || screenPos.y > 1) break;
+vec3 binarySearch(vec3 screenPosRayDir, vec3 startPos, int binarySearchSteps){
+	for(int i = 0; i < binarySearchSteps; i++){
+		if(startPos.x < 0 || startPos.y < 0 || startPos.x > 1 || startPos.y > 1) return vec3(0);
 
-		clipPosRayDir *= 0.5;
-		startPos += texture2D(depthtex0, screenPos.xy).x < screenPos.z ? -clipPosRayDir : clipPosRayDir;
+		screenPosRayDir *= 0.5;
+		startPos += texture2D(depthtex0, startPos.xy).x < startPos.z ? -screenPosRayDir : screenPosRayDir;
 	}
+
 	return startPos;
 }
 
+// This raytracer is so fast I swear...
+// Based from Belmu's raytracer https://github.com/BelmuTM/NobleRT
+// (it's basically an upgrade to Shadax's raytracer https://github.com/Shadax-stack/MinecraftSSR)
 vec3 rayTraceScene(vec3 screenPos, vec3 viewPos, vec3 rayDir, int steps, int binarySearchSteps){
-	// We'll also use this as a start position
-	vec3 clipPos = screenPos * 2.0 - 1.0;
-
-	if(clipPos.z < MC_HAND_DEPTH){
-		vec3 handScreenPos = toScreenSpacePos(toScreen(viewPos + rayDir * far).xy);
+	// If hand, do simple, flipped reflections
+	if(screenPos.z < 0.56){
+		vec3 handScreenPos = toScreenSpacePos(toScreen(viewPos + rayDir * 128.0).xy, depthtex0);
 		return vec3(handScreenPos.xy, handScreenPos.z != 1);
-	} else {
-		vec3 viewPosWithRayDir = viewPos + rayDir;
-		vec3 clipPosRayDir = toScreen(viewPosWithRayDir) * 2.0 - 1.0; // Put it back to clip space...
-		clipPosRayDir = normalize(clipPosRayDir - clipPos) * (2.0 / steps);
+	}
 
-		// vec3 startPos = clipPos;
-		for(int x = 0; x < steps; x++){
-			clipPos += clipPosRayDir;
-			vec3 newScreenPos = clipPos * 0.5 + 0.5;
-			if(newScreenPos.x < 0 || newScreenPos.y < 0 || newScreenPos.x > 1 || newScreenPos.y > 1) return vec3(0);
-			float depth = texture2D(depthtex0, newScreenPos.xy).x;
+	// Get screenspace rayDir
+	vec3 screenPosRayDir = normalize(toScreen(viewPos + rayDir) - screenPos) / steps;
 
-			if(newScreenPos.z > depth && (newScreenPos.z - depth) < MC_HAND_DEPTH){
-				if(binarySearchSteps == 0) return vec3(clipPos.xy * 0.5 + 0.5, depth != 1);
-				else return vec3(binarySearch(clipPosRayDir, clipPos, binarySearchSteps).xy * 0.5 + 0.5, depth != 1);
-			}
+	// Screen pos is our startPos
+	for(int x = 0; x < steps; x++){
+		// We raytrace here
+		screenPos += screenPosRayDir;
+		if(screenPos.x < 0 || screenPos.y < 0 || screenPos.x > 1 || screenPos.y > 1) return vec3(0);
+		float currDepth = texture2D(depthtex0, screenPos.xy).x;
+
+		if(screenPos.z > currDepth && (screenPos.z - currDepth) < 0.125){
+			if(binarySearchSteps == 0) return vec3(screenPos.xy, currDepth != 1);
+			return vec3(binarySearch(screenPosRayDir, screenPos, binarySearchSteps).xy, currDepth != 1);
 		}
 	}
 	

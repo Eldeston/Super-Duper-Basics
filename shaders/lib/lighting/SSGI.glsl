@@ -1,6 +1,6 @@
 // Written by xirreal#0281 on ShaderLabs
 vec3 cosWeightedRandHemisphereDir(vec3 norm, vec2 seed){
-    vec2 r = getRand3(seed, 8).xy;
+    vec2 r = getRand2(seed * 8.0);
     vec3 uu = normalize(cross(norm, vec3(0, 1, 1)));
     vec3 vv = cross(uu, norm);
 
@@ -18,9 +18,18 @@ vec3 getSSGICol(vec3 viewPos, vec3 screenPos, vec3 gBMVNorm, vec2 dither){
 	vec3 sampleDir = cosWeightedRandHemisphereDir(gBMVNorm, dither);
     // Raytrace scene...
 	vec3 GIScreenPos = rayTraceScene(screenPos, viewPos, sampleDir, SSGI_STEPS, SSGI_BISTEPS);
-    // Transform coords to previous frame coords
-	// GIScreenPos.xy = toPrevScreenPos(GIScreenPos.xy);
     
-    // Sample color and return
-	return texture2D(gcolor, GIScreenPos.xy).rgb * GIScreenPos.z;
+    if(GIScreenPos.z != 0){
+        #ifdef PREVIOUS_FRAME
+            // Transform coords to previous frame coords
+            GIScreenPos.xy = toPrevScreenPos(GIScreenPos.xy);
+            // Sample color and return
+            return texture2D(colortex5, GIScreenPos.xy).rgb;
+        #else
+            // Sample color and return
+            return texture2D(gcolor, GIScreenPos.xy).rgb;
+        #endif
+    }
+
+    return vec3(0);
 }

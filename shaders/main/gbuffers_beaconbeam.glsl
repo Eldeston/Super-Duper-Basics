@@ -1,20 +1,46 @@
 #include "/lib/utility/util.glsl"
-#include "/lib/structs.glsl"
 #include "/lib/settings.glsl"
 
-#include "/lib/globalVars/constants.glsl"
+varying vec2 texCoord;
 
-INOUT vec2 texcoord;
+varying vec3 norm;
 
-INOUT vec4 glcolor;
+varying vec4 glcolor;
 
 #ifdef VERTEX
-    void main(){
-        vec4 vertexPos = gl_ModelViewMatrix * gl_Vertex;
+    #if ANTI_ALIASING == 2
+        /* Screen resolutions */
+        uniform float viewWidth;
+        uniform float viewHeight;
 
-        texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+        #include "/lib/utility/taaJitter.glsl"
+    #endif
+
+    #ifdef WORLD_CURVATURE
+        uniform mat4 gbufferModelView;
+    #endif
+    
+    uniform mat4 gbufferModelViewInverse;
+
+    void main(){
+        texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+
+	    norm = normalize(mat3(gbufferModelViewInverse) * (gl_NormalMatrix * gl_Normal));
         
-	    gl_Position = gl_ProjectionMatrix * vertexPos;
+	    #ifdef WORLD_CURVATURE
+            // Feet player pos
+            vec4 vertexPos = gbufferModelViewInverse * (gl_ModelViewMatrix * gl_Vertex);
+
+            vertexPos.y -= lengthSquared(vertexPos.xz) / WORLD_CURVATURE_SIZE;
+            
+            gl_Position = gl_ProjectionMatrix * (gbufferModelView * vertexPos);
+        #else
+            gl_Position = ftransform();
+        #endif
+
+        #if ANTI_ALIASING == 2
+            gl_Position.xy += jitterPos(gl_Position.w);
+        #endif
 
         glcolor = gl_Color;
     }
@@ -24,10 +50,24 @@ INOUT vec4 glcolor;
     uniform sampler2D texture;
 
     void main(){
-        vec4 color = texture2D(texture, texcoord);
-        color.rgb *= glcolor;
+        vec4 albedo = texture2D(texture, texCoord);
+
+        // Alpha test, discard immediately
+        if(albedo.a <= ALPHA_THRESHOLD) discard;
+
+        #if WHITE_MODE == 0
+            albedo.rgb *= glcolor.rgb;
+        #elif WHITE_MODE == 1
+            albedo.rgb = vec3(1);
+        #elif WHITE_MODE == 2
+            albedo.rgb = vec3(0);
+        #elif WHITE_MODE == 3
+            albedo.rgb = glcolor.rgb;
+        #endif
+
+        albedo.rgb = pow(albedo.rgb, vec3(GAMMA));
 
     /* DRAWBUFFERS:0 */
-        gl_FragData[0] = color; //gcolor
+        gl_FragData[0] = vec4(albedo.rgb * EMISSIVE_INTENSITY, albedo.a * glcolor.a); //gcolor
     }
 #endif

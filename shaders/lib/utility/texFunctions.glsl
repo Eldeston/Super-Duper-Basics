@@ -1,14 +1,5 @@
-// Filter by iq
-vec4 tex2DBicubic(sampler2D image, vec2 st, vec2 texRes){
-    vec2 uv = st * texRes + 0.5;
-    vec2 iuv = floor(uv); vec2 fuv = fract(uv);
-    uv = iuv + fuv * fuv * fuv * (fuv * (fuv * 6.0 - 15.0) + 10.0);
-    uv = (uv - 0.5) / texRes;
-    return texture2D(image, uv);
-}
-
-vec4 tex2DBilinear(sampler2D image, vec2 st, vec2 texRes){
-    vec2 pixSize = 1.0 / texRes;
+vec4 texPix2DBilinear(sampler2D image, vec2 st, vec2 texSize){
+    vec2 pixSize = 1.0 / texSize;
 
     vec4 downLeft = texture2D(image, st);
     vec4 downRight = texture2D(image, st + vec2(pixSize.x, 0));
@@ -16,50 +7,73 @@ vec4 tex2DBilinear(sampler2D image, vec2 st, vec2 texRes){
     vec4 upRight = texture2D(image, st + vec2(0, pixSize.y));
     vec4 upLeft = texture2D(image, st + vec2(pixSize.x , pixSize.y));
 
-    float a = fract(st.x * texRes.x);
-    float b = fract(st.y * texRes.y);
+    float a = fract(st.x * texSize.x);
+    float b = fract(st.y * texSize.y);
 
     vec4 horizontal0 = mix(downLeft, downRight, a);
     vec4 horizontal1 = mix(upRight, upLeft, a);
     return mix(horizontal0, horizontal1, b);
 }
 
-// Noise texture
-vec4 getRandTex(vec2 st, int tile){
-	return texture2D(noisetex, st * tile);
+vec4 texPix2DCubic(sampler2D image, vec2 st, vec2 texSize){
+    vec2 pixSize = 1.0 / texSize;
+
+    vec4 downLeft = texture2D(image, st);
+    vec4 downRight = texture2D(image, st + vec2(pixSize.x, 0));
+
+    vec4 upRight = texture2D(image, st + vec2(0, pixSize.y));
+    vec4 upLeft = texture2D(image, st + vec2(pixSize.x , pixSize.y));
+
+    float a = smoothen(fract(st.x * texSize.x));
+    float b = smoothen(fract(st.y * texSize.y));
+
+    vec4 horizontal0 = mix(downLeft, downRight, a);
+    vec4 horizontal1 = mix(upRight, upLeft, a);
+    return mix(horizontal0, horizontal1, b);
 }
 
-vec3 getRand3(vec2 st, int tile){
-    st *= tile;
-    float x = texture2D(noisetex, st).x;
-    float y = texture2D(noisetex, vec2(-st.x, st.y)).x;
-    float z = texture2D(noisetex, -st).x;
-    if(NOISE_SPEED == 0) return fract(vec3(x, y, z) * 4.0);
-    return fract(vec3(x, y, z) * 4.0 + frameTimeCounter * NOISE_SPEED);
+vec4 cubic(float v){
+    vec4 n = vec4(1, 2, 3, 4) - v;
+    vec4 s = n * n * n;
+    float x = s.x;
+    float y = s.y - 4.0 * s.x;
+    float z = s.z - 4.0 * s.y + 6.0 * s.x;
+    float w = 6.0 - x - y - z;
+    return vec4(x, y, z, w) / 6.0;
 }
 
-float getCellNoise(vec2 st){
-    float d0 = tex2DBilinear(noisetex, st + frameTimeCounter * 0.0125, vec2(256)).z;
-    float d1 = tex2DBilinear(noisetex, st * 4.0 - frameTimeCounter * 0.05, vec2(256)).z;
-    #ifdef INVERSE
-        return 1.0 - d0 * 0.875 + d1 * 0.125;
-    #else
-        return d0 * 0.875 + d1 * 0.125;
-    #endif
+vec4 texture2DBicubic(sampler2D image, vec2 texCoords, vec2 texSize){
+    vec2 invTexSize = 1.0 / texSize;
+
+    texCoords = texCoords * texSize - 0.5;
+
+    vec2 fxy = fract(texCoords);
+    texCoords -= fxy;
+ 
+    vec4 xcubic = cubic(fxy.x);
+    vec4 ycubic = cubic(fxy.y);
+ 
+    vec4 c = texCoords.xxyy + vec2(-0.5, 1.5).xyxy;
+ 
+    vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+    vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
+ 
+    offset *= invTexSize.xxyy;
+ 
+    vec4 sample0 = texture2D(image, offset.xz);
+    vec4 sample1 = texture2D(image, offset.yz);
+    vec4 sample2 = texture2D(image, offset.xw);
+    vec4 sample3 = texture2D(image, offset.yw);
+ 
+    float sx = s.x / (s.x + s.y);
+    float sy = s.z / (s.z + s.w);
+ 
+    return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
 }
 
-// Convert height map of water to a normal map
-vec4 H2NWater(vec2 st){
-    float waterPixel = WATER_BLUR_SIZE / noiseTextureResolution;
-	vec2 waterUv = st / WATER_TILE_SIZE;
-
-	float d = getCellNoise(waterUv);
-	float dx = (d - getCellNoise(waterUv + vec2(waterPixel, 0))) / waterPixel;
-	float dy = (d - getCellNoise(waterUv + vec2(0, waterPixel))) / waterPixel;
-
-    #ifdef INVERSE
-        d = 1.0 - d;
-    #endif
-    
-    return vec4(normalize(vec3(dx, dy, WATER_DEPTH_SIZE)), d);
-}
+vec4 texture2DBox(sampler2D image, vec2 texCoords, vec2 texSize){
+    vec2 invTexSize = 1.0 / texSize;
+	vec4 sample = texture2D(image, texCoords - invTexSize) + texture2D(image, texCoords + invTexSize) +
+    texture2D(image, texCoords - vec2(-invTexSize.x, invTexSize.y)) + texture2D(image, texCoords + vec2(-invTexSize.x, invTexSize.y));
+	return sample * 0.25;
+	}
