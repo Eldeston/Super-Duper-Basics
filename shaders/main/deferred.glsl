@@ -107,13 +107,21 @@ varying vec2 screenCoord;
 
         // If not sky, don't calculate lighting
         if(!skyMask){
+            // Declare and get materials
+            matPBR material;
+            material.albedo = texture2D(colortex2, screenCoord);
+            material.normal = texture2D(colortex1, screenCoord).rgb * 2.0 - 1.0;
+
+            vec2 matRaw0 = texture2D(colortex3, screenCoord).xy;
+            material.metallic = matRaw0.x; material.smoothness = matRaw0.y;
+
             #if ANTI_ALIASING == 2
                 vec3 dither = toRandPerFrame(getRand3(gl_FragCoord.xy * 0.03125), frameTimeCounter);
             #else
                 vec3 dither = getRand3(gl_FragCoord.xy * 0.03125);
             #endif
-            
-            // Do something
+
+            sceneCol = complexShadingDeferred(material, posVector, sceneCol, dither);
         }
 
         // Fog calculation
@@ -121,10 +129,5 @@ varying vec2 screenCoord;
 
     /* DRAWBUFFERS:0 */
         gl_FragData[0] = vec4(sceneCol, 1); //gcolor
-
-        #ifdef PREVIOUS_FRAME
-        /* DRAWBUFFERS:05 */
-            gl_FragData[1] = vec4(sceneCol, 1); //colortex5
-        #endif
     }
 #endif

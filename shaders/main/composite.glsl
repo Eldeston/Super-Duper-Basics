@@ -103,7 +103,15 @@ varying vec2 screenCoord;
         if(posVector.screenPos.z != 1){
             // If the object is transparent render lighting sperately
             if(texture2D(depthtex1, screenCoord).x > posVector.screenPos.z){
-                // Do something...
+                // Declare and get materials
+                matPBR material;
+                material.albedo = texture2D(colortex2, screenCoord);
+                material.normal = texture2D(colortex1, screenCoord).rgb * 2.0 - 1.0;
+
+                vec2 matRaw0 = texture2D(colortex3, screenCoord).xy;
+                material.metallic = matRaw0.x; material.smoothness = matRaw0.y;
+
+                sceneCol = complexShadingDeferred(material, posVector, sceneCol, dither);
 
                 // Fog calculation
                 sceneCol = getFogRender(posVector.eyePlayerPos, sceneCol, getSkyRender(vec3(0), normalize(posVector.eyePlayerPos), false), posVector.feetPlayerPos.y + cameraPosition.y, false);
@@ -111,21 +119,7 @@ varying vec2 screenCoord;
         }
 
     /* DRAWBUFFERS:0 */
-        gl_FragData[0] = vec4(sceneCol, 1); //gcolor
-
-        #ifdef WORLD_LIGHT
-        /* DRAWBUFFERS:04 */
-            gl_FragData[1] = vec4(getGodRays(posVector.feetPlayerPos, dither.x), 1); //colortex4
-            
-            #ifdef PREVIOUS_FRAME
-            /* DRAWBUFFERS:045 */
-                gl_FragData[2] = vec4(sceneCol, 1); //colortex5
-            #endif
-        #else
-            #ifdef PREVIOUS_FRAME
-            /* DRAWBUFFERS:05 */
-                gl_FragData[1] = vec4(sceneCol, 1); //colortex5
-            #endif
-        #endif
+        // Gamma correct last
+        gl_FragData[0] = vec4(pow(sceneCol, vec3(RCPGAMMA)), 1); //gcolor
     }
 #endif

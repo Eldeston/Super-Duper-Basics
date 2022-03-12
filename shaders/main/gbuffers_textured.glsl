@@ -27,8 +27,8 @@ uniform mat4 gbufferModelViewInverse;
     
     void main(){
         texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
-        // Lightmap fix for mods
-        lmCoord = saturate(((gl_TextureMatrix[1] * gl_MultiTexCoord1).xy - 0.03125) * 1.06667);
+        // Lightmap fix for mods, use ((gl_TextureMatrix[1] * gl_MultiTexCoord1).xy - 0.03125) * 1.06667 to remap it to 0-1
+        lmCoord = saturate((gl_TextureMatrix[1] * gl_MultiTexCoord1).xy);
 
 	    norm = normalize(mat3(gbufferModelViewInverse) * (gl_NormalMatrix * gl_Normal));
         
