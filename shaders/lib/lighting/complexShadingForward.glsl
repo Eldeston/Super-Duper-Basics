@@ -9,7 +9,7 @@ vec4 complexShadingGbuffers(matPBR material, positionVectors posVector, float di
 		material.light.y = WORLD_SKYLIGHT_AMOUNT;
 	#endif
 
-	vec3 lightMapTex = pow(texture2D(lightmap, material.light).rgb, vec3(GAMMA));
+	vec3 lightMapTex = pow(texture2D(lightmap, material.light).rgb, vec3(GAMMA)) * material.ambient;
 	vec3 totalDiffuse = material.albedo.rgb * (lightMapTex + material.emissive * EMISSIVE_INTENSITY);
 
 	return vec4(totalDiffuse, material.albedo.a);

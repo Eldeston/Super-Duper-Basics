@@ -105,6 +105,9 @@ varying vec2 screenCoord;
 
         vec3 sceneCol = texture2D(gcolor, screenCoord).rgb;
 
+        // Get sky color and do skyCol with vanilla sun and moon and skybox blend and input as new skyCol
+        vec3 skyRender = getSkyRender(sceneCol, normalize(posVector.eyePlayerPos), skyMask, true);
+
         // If not sky, don't calculate lighting
         if(!skyMask){
             // Declare and get materials
@@ -122,12 +125,22 @@ varying vec2 screenCoord;
             #endif
 
             sceneCol = complexShadingDeferred(material, posVector, sceneCol, dither);
+
+            #ifdef OUTLINES
+                /* Outline calculation */
+                sceneCol *= 1.0 + getOutline(depthtex0, posVector.screenPos, OUTLINE_PIX_SIZE) * (OUTLINE_BRIGHTNESS - 1.0);
+            #endif
         }
 
         // Fog calculation
-        sceneCol = getFogRender(posVector.eyePlayerPos, sceneCol, getSkyRender(sceneCol, normalize(posVector.eyePlayerPos), skyMask, true), posVector.feetPlayerPos.y + cameraPosition.y, skyMask);
+        sceneCol = getFogRender(posVector.eyePlayerPos, sceneCol, skyRender, posVector.feetPlayerPos.y + cameraPosition.y, skyMask);
 
     /* DRAWBUFFERS:0 */
         gl_FragData[0] = vec4(sceneCol, 1); //gcolor
+
+        #ifdef PREVIOUS_FRAME
+        /* DRAWBUFFERS:05 */
+            gl_FragData[1] = vec4(sceneCol, 1); //colortex5
+        #endif
     }
 #endif

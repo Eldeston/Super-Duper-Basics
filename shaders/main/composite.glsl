@@ -113,13 +113,30 @@ varying vec2 screenCoord;
 
                 sceneCol = complexShadingDeferred(material, posVector, sceneCol, dither);
 
+                // Get sky color
+                vec3 skyRender = getSkyRender(vec3(0), normalize(posVector.eyePlayerPos), false);
+
                 // Fog calculation
-                sceneCol = getFogRender(posVector.eyePlayerPos, sceneCol, getSkyRender(vec3(0), normalize(posVector.eyePlayerPos), false), posVector.feetPlayerPos.y + cameraPosition.y, false);
+                sceneCol = getFogRender(posVector.eyePlayerPos, sceneCol, skyRender, posVector.feetPlayerPos.y + cameraPosition.y, false);
             }
         }
 
     /* DRAWBUFFERS:0 */
-        // Gamma correct last
-        gl_FragData[0] = vec4(pow(sceneCol, vec3(RCPGAMMA)), 1); //gcolor
+        gl_FragData[0] = vec4(sceneCol, 1); //gcolor
+
+        #ifdef WORLD_LIGHT
+        /* DRAWBUFFERS:04 */
+            gl_FragData[1] = vec4(getGodRays(posVector.feetPlayerPos, dither.x), 1); //colortex4
+            
+            #ifdef PREVIOUS_FRAME
+            /* DRAWBUFFERS:045 */
+                gl_FragData[2] = vec4(sceneCol, 1); //colortex5
+            #endif
+        #else
+            #ifdef PREVIOUS_FRAME
+            /* DRAWBUFFERS:05 */
+                gl_FragData[1] = vec4(sceneCol, 1); //colortex5
+            #endif
+        #endif
     }
 #endif
